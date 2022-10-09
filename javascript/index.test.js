@@ -37,9 +37,10 @@ describe('Inventory', () => {
         expect(updatedConcertTickets.price).toBe(50);
     });
 
-    test('does not allow gold coin price to exceed 80', () => {
+    test('does not allow gold coin price to exceed 80 and does not update the sellBy value', () => {
         const updatedItem = addItemAndUpdatePrice('Gold Coins', 10, 80);
         expect(updatedItem.price).toBe(80);
+        expect(updatedItem.sellBy).toBe(10);
     });
 
     test('does not reduce sellBy time for gold coins', () => {
@@ -65,5 +66,41 @@ describe('Inventory', () => {
     test('reduces price to 0 when sellBy for Concert Tickets is zero', () => {
         const updatedItem = addItemAndUpdatePrice('Concert Tickets', 0, 20);
         expect(updatedItem.price).toBe(0);
+    });
+
+    test('updates the price and sell by value accordigly for multiple items', () => {
+        const normalItem = new Item('Normal Item', 10, 5);
+        const goldCoins = new Item('Gold Coins', 10, 80);
+        const concertTickets = new Item('Concert Tickets', 3, 25);
+        const inventory = new Inventory([normalItem, goldCoins, concertTickets])
+        inventory.updatePrice();
+
+        expect(normalItem.price).toBe(4);
+        expect(normalItem.sellBy).toBe(9);
+        expect(goldCoins.price).toBe(80);
+        expect(goldCoins.sellBy).toBe(10);
+        expect(concertTickets.price).toBe(28);
+        expect(concertTickets.sellBy).toBe(2);
+    });
+
+    test('updates the same item multiple times', () => {
+        const normalItem = new Item('Normal Item', 1, 4);
+        const inventory = new Inventory([normalItem])
+
+        inventory.updatePrice();
+        expect(normalItem.price).toBe(3);
+        expect(normalItem.sellBy).toBe(0);
+
+        inventory.updatePrice();
+        expect(normalItem.price).toBe(1);
+        expect(normalItem.sellBy).toBe(-1);
+
+        inventory.updatePrice();
+        expect(normalItem.price).toBe(0);
+        expect(normalItem.sellBy).toBe(-2);
+
+        inventory.updatePrice();
+        expect(normalItem.price).toBe(0);
+        expect(normalItem.sellBy).toBe(-3);
     });
 });
