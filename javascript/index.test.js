@@ -87,24 +87,74 @@ describe('Inventory', () => {
     expect(concertTickets.sellBy).toBe(2);
   });
 
-  test('updates the same item multiple times', () => {
-    const normalItem = createItem('Normal Item', 1, 4);
-    const inventory = new Inventory([normalItem]);
+  test('changes prices for normal items based on the sellBy value', () => {
+    const item = createItem('Normal Item', 2, 8);
+    const inventory = new Inventory([item]);
 
-    inventory.updatePrice();
-    expect(normalItem.price).toBe(3);
-    expect(normalItem.sellBy).toBe(0);
+    const expectedUpdatedPriceAndSellBy = [
+      { price: 7, sellBy: 1 },
+      { price: 6, sellBy: 0 },
+      { price: 4, sellBy: -1 },
+      { price: 2, sellBy: -2 },
+      { price: 0, sellBy: -3 },
+      { price: 0, sellBy: -4 },
+      { price: 0, sellBy: -5 },
+    ];
 
-    inventory.updatePrice();
-    expect(normalItem.price).toBe(1);
-    expect(normalItem.sellBy).toBe(-1);
+    expectedUpdatedPriceAndSellBy.forEach(({ price, sellBy }) => {
+      inventory.updatePrice();
+      expect(item.price).toBe(price);
+      expect(item.sellBy).toBe(sellBy);
+    });
+  });
 
-    inventory.updatePrice();
-    expect(normalItem.price).toBe(0);
-    expect(normalItem.sellBy).toBe(-2);
+  test('changes price for concert tickets based on the sellBy value', () => {
+    const item = createItem('Concert Tickets', 12, 8);
+    const inventory = new Inventory([item]);
 
-    inventory.updatePrice();
-    expect(normalItem.price).toBe(0);
-    expect(normalItem.sellBy).toBe(-3);
+    const expectedUpdatedPriceAndSellBy = [
+      { price: 9, sellBy: 11 },
+      { price: 11, sellBy: 10 },
+      { price: 13, sellBy: 9 },
+      { price: 15, sellBy: 8 },
+      { price: 17, sellBy: 7 },
+      { price: 19, sellBy: 6 },
+      { price: 22, sellBy: 5 },
+      { price: 25, sellBy: 4 },
+      { price: 28, sellBy: 3 },
+      { price: 31, sellBy: 2 },
+      { price: 34, sellBy: 1 },
+      { price: 37, sellBy: 0 },
+      { price: 0, sellBy: -1 },
+      { price: 0, sellBy: -2 },
+    ];
+
+    expectedUpdatedPriceAndSellBy.forEach(({ price, sellBy }) => {
+      inventory.updatePrice();
+      expect(item.price).toBe(price);
+      expect(item.sellBy).toBe(sellBy);
+    });
+  });
+
+  test('changes price for fine art based on the sellBy value', () => {
+    const item = createItem('Fine Art', 3, 40);
+    const inventory = new Inventory([item]);
+
+    const expectedUpdatedPriceAndSellBy = [
+      { price: 41, sellBy: 2 },
+      { price: 42, sellBy: 1 },
+      { price: 43, sellBy: 0 },
+      { price: 45, sellBy: -1 },
+      { price: 47, sellBy: -2 },
+      { price: 49, sellBy: -3 },
+      { price: 50, sellBy: -4 },
+      { price: 50, sellBy: -5 },
+    ];
+
+    expectedUpdatedPriceAndSellBy.forEach(({ price, sellBy }) => {
+      inventory.updatePrice();
+      expect(item.price).toBe(price);
+      expect(item.sellBy).toBe(sellBy);
+    });
   });
 });

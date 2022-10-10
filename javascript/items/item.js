@@ -9,10 +9,9 @@ class Item {
   }
 
   updatePriceAndSellBy() {
-    this.decreasePriceIfAllowed();
-
     this.sellBy = this.sellBy - 1;
 
+    this.decreasePriceIfAllowed();
     if (this.sellBy < 0) {
       this.decreasePriceIfAllowed();
     }
