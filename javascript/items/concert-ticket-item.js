@@ -5,11 +5,11 @@ class ConcertTicketItem extends Item {
     if (this.sellBy > 0) {
       this.increasePriceIfAllowed();
 
-      if ( this.sellBy < 11) {
+      if (this.sellBy < 11) {
         this.increasePriceIfAllowed();
       }
 
-      if ( this.sellBy < 6) {
+      if (this.sellBy < 6) {
         this.increasePriceIfAllowed();
       }
     }

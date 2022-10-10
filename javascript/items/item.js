@@ -39,7 +39,7 @@ class Item {
   }
 
   toString() {
-    return `${this.name}, ${this.sellBy}, ${this.price}`
+    return `${this.name}, ${this.sellBy}, ${this.price}`;
   }
 }
 
