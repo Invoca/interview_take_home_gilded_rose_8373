@@ -1,8 +1,8 @@
-const { Inventory, Item } = require('./index.js');
+const { Inventory, createItem } = require('./index.js');
 
 describe('Inventory', () => {
     function addItemAndUpdatePrice(itemName, sellBy, price) {
-        const items = [new Item(itemName, sellBy, price)];
+        const items = [createItem(itemName, sellBy, price)];
         const inventory = new Inventory(items)
         inventory.updatePrice();
         return items[0];
@@ -69,9 +69,9 @@ describe('Inventory', () => {
     });
 
     test('updates the price and sell by value accordigly for multiple items', () => {
-        const normalItem = new Item('Normal Item', 10, 5);
-        const goldCoins = new Item('Gold Coins', 10, 80);
-        const concertTickets = new Item('Concert Tickets', 3, 25);
+        const normalItem = createItem('Normal Item', 10, 5);
+        const goldCoins = createItem('Gold Coins', 10, 80);
+        const concertTickets = createItem('Concert Tickets', 3, 25);
         const inventory = new Inventory([normalItem, goldCoins, concertTickets])
         inventory.updatePrice();
 
@@ -84,7 +84,7 @@ describe('Inventory', () => {
     });
 
     test('updates the same item multiple times', () => {
-        const normalItem = new Item('Normal Item', 1, 4);
+        const normalItem = createItem('Normal Item', 1, 4);
         const inventory = new Inventory([normalItem])
 
         inventory.updatePrice();

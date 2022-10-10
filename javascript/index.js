@@ -5,49 +5,7 @@ class Inventory {
 
   updatePrice() {
     this.items.forEach((item) => {
-      if (item.name !== 'Fine Art' && item.name !== 'Concert Tickets') {
-        if (item.price > 0) {
-          if (item.name !== 'Gold Coins') {
-            item.price = item.price - 1;
-          }
-        }
-      } else {
-        if (item.price < 50) {
-          item.price = item.price + 1;
-          if (item.name === 'Concert Tickets') {
-            if (item.sellBy < 11) {
-              if (item.price < 50) {
-                item.price = item.price + 1;
-              }
-            }
-            if (item.sellBy < 6) {
-              if (item.price < 50) {
-                item.price = item.price + 1;
-              }
-            }
-          }
-        } 
-      }
-      if (item.name !== 'Gold Coins') {
-        item.sellBy = item.sellBy - 1;
-      }
-      if (item.sellBy < 0) {
-        if (item.name !== 'Fine Art') {
-          if (item.name !== 'Concert Tickets') {
-            if (item.price > 0) {
-              if (item.name !== 'Cold Coins') {
-                item.price = item.price - 1;
-              }
-            }
-          } else {
-            item.price = item.price - item.price;
-          }
-        } else {
-          if (item.price < 50) {
-            item.price = item.price + 1;
-          }
-        }
-      }
+      item.updatePriceAndSellBy();
     });
   }
 }
@@ -59,9 +17,101 @@ class Item {
     this.price = price;
   }
 
+  updatePriceAndSellBy() {
+    this.decreasePriceIfAllowed();
+
+    this.sellBy = this.sellBy - 1;
+
+    if (this.sellBy < 0) {
+      this.decreasePriceIfAllowed();
+    }
+  }
+
+  increasePriceIfAllowed() {
+    if (this.price < this.getMaxPrice()) {
+      this.price = this.price + 1;
+    }
+  }
+
+  decreasePriceIfAllowed() {
+    if (this.price > this.getMinPrice()) {
+      this.price = this.price - 1;
+    }
+  }
+
+  getMaxPrice() {
+    return 50;
+  }
+
+  getMinPrice() {
+    return 0;
+  }
+
   toString() {
     return `${this.name}, ${this.sellBy}, ${this.price}`
   }
 }
 
-module.exports = { Inventory, Item };
+class GoldCoinItem extends Item {
+  updatePriceAndSellBy() {
+    // Intentionally Empty
+  }
+
+  getMaxPrice() {
+    return 80;
+  }
+
+  getMinPrice() {
+    return 80;
+  }
+}
+
+class ConcertTicketsItem extends Item {
+  updatePriceAndSellBy() {
+    if (this.sellBy > 0) {
+      this.increasePriceIfAllowed();
+
+      if ( this.sellBy < 11) {
+        this.increasePriceIfAllowed();
+      }
+
+      if ( this.sellBy < 6) {
+        this.increasePriceIfAllowed();
+      }
+    }
+
+    this.sellBy = this.sellBy - 1;
+
+    if (this.sellBy < 0) {
+      this.price = 0;
+    }
+  }
+}
+
+class FineArtItem extends Item {
+  updatePriceAndSellBy() {
+    this.increasePriceIfAllowed();
+
+    if (this.sellBy < 0) {
+      this.increasePriceIfAllowed();
+    }
+
+    this.sellBy = this.sellBy - 1;
+  }
+}
+
+function createItem(name, sellBy, price) {
+  if (name === 'Gold Coins') {
+    return new GoldCoinItem(name, sellBy, price);
+  }
+  if (name === 'Concert Tickets') {
+    return new ConcertTicketsItem(name, sellBy, price);
+  }
+  if (name === 'Fine Art') {
+    return new FineArtItem(name, sellBy, price);
+  }
+
+  return new Item(name, sellBy, price);
+}
+
+module.exports = { Inventory, Item, createItem };
