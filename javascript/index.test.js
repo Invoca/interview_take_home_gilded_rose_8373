@@ -157,4 +157,24 @@ describe('Inventory', () => {
       expect(item.sellBy).toBe(sellBy);
     });
   });
+
+  test('changes price for Flowers twice as fast compared to normal products', () => {
+    const item = createItem('Flowers', 3, 9);
+    const inventory = new Inventory([item]);
+
+    const expectedUpdatedPriceAndSellBy = [
+      { price: 7, sellBy: 2 },
+      { price: 5, sellBy: 1 },
+      { price: 3, sellBy: 0 },
+      { price: 1, sellBy: -1 },
+      { price: 0, sellBy: -2 },
+      { price: 0, sellBy: -3 },
+    ];
+
+    expectedUpdatedPriceAndSellBy.forEach(({ price, sellBy }) => {
+      inventory.updatePrice();
+      expect(item.price).toBe(price);
+      expect(item.sellBy).toBe(sellBy);
+    });
+  });
 });

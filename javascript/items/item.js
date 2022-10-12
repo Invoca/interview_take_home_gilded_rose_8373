@@ -23,10 +23,18 @@ class Item {
     }
   }
 
-  decreasePriceIfAllowed() {
-    if (this.price > this.getMinPrice()) {
-      this.price = this.price - 1;
+  decreasePriceIfAllowed(decreaseRate = 1) {
+    const remaining = this.price - this.getMinPrice();
+
+    if (remaining === 0) {
+      return;
     }
+
+    if (remaining < decreaseRate) {
+      decreaseRate = remaining;
+    }
+
+    this.price = this.price - decreaseRate;
   }
 
   getMaxPrice() {
